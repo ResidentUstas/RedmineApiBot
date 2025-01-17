@@ -1,5 +1,7 @@
 package ru.krista.fm.redmine.config;
 
+import com.taskadapter.redmineapi.RedmineManager;
+import com.taskadapter.redmineapi.RedmineManagerFactory;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,4 +28,13 @@ public class BotConfig {
         return botOptions;
     }
 
+    @Bean
+    public RedmineManager getRedmineManager(){
+        String uri = "http://fmredmine.krista.ru/";
+        String apiAccessKey = "a84e0c96ec3e7b9142f1c06dc8e176db72dd31ea";
+
+        RedmineManager mgr = RedmineManagerFactory.createWithApiKey(uri, apiAccessKey);
+        mgr.setObjectsPerPage(100);
+        return mgr;
+    }
 }
