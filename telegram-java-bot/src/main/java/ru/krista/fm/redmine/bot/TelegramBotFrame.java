@@ -92,7 +92,9 @@ public class TelegramBotFrame extends TelegramLongPollingBot {
         sendMessage(chatId, "Формирую отчёт..");
         var issuesList = redmineService.getIssues(userId, date);
         ExportService service = new ExportService(redmineService);
-        var report = service.generateReport(new Report.ParameterRec[]{new Report.ParameterRec(issuesList, "tasks")});
+        var report = service.generateReport(new Report.ParameterRec[]{new Report.ParameterRec(issuesList, "tasks"),
+                new Report.ParameterRec(date, "дата"),
+                new Report.ParameterRec(userId, "id")});
         try (FileOutputStream outputStream = new FileOutputStream("C:\\Users\\g.yakovlev\\Documents\\reportRedmineTXT.xlsx")) {
             outputStream.write(report.fileBody.getByteArray());
         }

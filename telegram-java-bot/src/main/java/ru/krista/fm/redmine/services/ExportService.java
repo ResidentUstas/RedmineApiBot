@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 import ru.krista.fm.redmine.enums.Projects;
 import ru.krista.fm.redmine.helpers.DateHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,6 +23,8 @@ public class ExportService extends RedmineBaseReport {
     private List<Issue> issueList;
     private int index;
     private boolean isPlan;
+    private LocalDate date;
+    private long userId;
 
     public ExportService(RedmineService redmineService) {
         this.redmineService = redmineService;
@@ -26,9 +33,11 @@ public class ExportService extends RedmineBaseReport {
     @Override
     protected Boolean setup(ParameterRec[] repParams) {
         issueList = (List<Issue>) repParams[0].getValue();
+        date = (LocalDate) repParams[1].getValue();
+        userId = Long.parseLong(String.valueOf(repParams[2].getValue()));
 
         setFileName(String.format("%s_отчёт за %s.xlsx", !issueList.isEmpty() ?
-                issueList.get(0).getAssigneeName() + "_" : "", DateHelper.getCurrentMonthName()));
+                issueList.get(0).getAssigneeName() + "_" : "", DateHelper.getMonthName(date.getMonthValue(), false)));
         replacements.put("MOUNTH+1", DateHelper.getCurrentMonthName(1));
         replacements.put("MOUNTH", DateHelper.getCurrentMonthName());
         replacements.put("YEAR+1", DateHelper.getCurrentYear());
@@ -121,8 +130,14 @@ public class ExportService extends RedmineBaseReport {
     private List<Issue> checkProcessIssues(List<Issue> processIssues) throws RedmineException {
         List<Issue> result = new ArrayList<>();
         for (var issue : processIssues) {
-            var issueJournals = redmineService.getIssueJournal(issue.getId()).stream().filter(x -> x.getCreatedOn().getTime() < new Date(2024 - 1900, 11, 31).getTime() &&
-                    x.getCreatedOn().getTime() > new Date(2024 - 1900, 11, 1).getTime() && x.getUser().getId() == 351).toList();
+            var issueJournals = redmineService.getIssueJournal(issue.getId()).stream().filter(x -> {
+                try {
+                    return x.getCreatedOn().getTime() < getBorderMonth(true).getTime() &&
+                            x.getCreatedOn().getTime() > getBorderMonth(false).getTime() && x.getUser().getId() == userId;
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }).toList();
             var details = issueJournals.stream().flatMap(x -> x.getDetails().stream()).toList();
             var checkOP = details.stream().anyMatch(x -> x.getName().equals("done_ratio") &&
                     x.getNewValue().equals("100"));
@@ -131,6 +146,14 @@ public class ExportService extends RedmineBaseReport {
             }
         }
         return result;
+    }
+
+    private Date getBorderMonth(boolean isEnd) throws ParseException {
+        LocalDate startOfMonth = YearMonth.from(date).atDay(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        return isEnd ? sdf.parse(endOfMonth.toString()) : sdf.parse(startOfMonth.toString());
     }
 
     private String getTrackerName(String name) {
