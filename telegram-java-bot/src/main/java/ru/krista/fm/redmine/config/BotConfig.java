@@ -2,6 +2,7 @@ package ru.krista.fm.redmine.config;
 
 import com.taskadapter.redmineapi.RedmineManager;
 import com.taskadapter.redmineapi.RedmineManagerFactory;
+import com.taskadapter.redmineapi.internal.Transport;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ public class BotConfig {
 
         RedmineManager mgr = RedmineManagerFactory.createWithApiKey(uri, apiAccessKey);
         mgr.setObjectsPerPage(100);
+        Transport transport = mgr.getTransport();
         return mgr;
     }
 }

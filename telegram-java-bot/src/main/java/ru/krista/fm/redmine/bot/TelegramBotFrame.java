@@ -121,7 +121,7 @@ public class TelegramBotFrame extends TelegramLongPollingBot {
     private void helloPhraseExe(Long chatId, String firstname) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
-        sendMessage.setText(String.format("Привет, %s, рад тебя слышать! скинь твой redmine_id, чтобы получить отчёт", firstname));
+        sendMessage.setText(String.format("Привет, %s, рад тебя слышать! скинь свой redmine_id, чтобы получить отчёт", firstname));
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {

@@ -32,7 +32,7 @@ public class RedmineService {
                 .add("op[created_on]", "<=")
                 .add("v[created_on][]", getFormatDate(date, true));
 
-        List<Issue> issues = manager.getIssueManager().getIssues(params).getResults();
+        List<Issue> issues = manager.getIssueManager().getIssues(params);
         return issues;
     }
 

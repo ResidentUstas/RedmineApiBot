@@ -38,10 +38,10 @@ public class ExportService extends RedmineBaseReport {
 
         setFileName(String.format("%s_отчёт за %s.xlsx", !issueList.isEmpty() ?
                 issueList.get(0).getAssigneeName() + "_" : "", DateHelper.getMonthName(date.getMonthValue(), false)));
-        replacements.put("MOUNTH+1", DateHelper.getCurrentMonthName(1));
-        replacements.put("MOUNTH", DateHelper.getCurrentMonthName());
-        replacements.put("YEAR+1", DateHelper.getCurrentYear());
-        replacements.put("YEAR", DateHelper.getCurrentYear());
+        replacements.put("MOUNTH+1", DateHelper.getCurrentMonthName(date,1));
+        replacements.put("MOUNTH", DateHelper.getCurrentMonthName(date));
+        replacements.put("YEAR+1", DateHelper.getCurrentYear(date));
+        replacements.put("YEAR", DateHelper.getCurrentYear(date));
         makeReplacement();
 
         return true;

@@ -199,19 +199,18 @@ public class DateHelper {
         return (year * 10000) + (month * 100);
     }
 
-    public static String getCurrentMonthName(int... plus) {
+    public static String getCurrentMonthName(LocalDate date, int... plus) {
         int addVal = 0;
         if (plus.length > 0) addVal = plus[0];
-        LocalDate today = LocalDate.now();
-        Month month = today.getMonth();
-        var result = getMonthName(month.getValue() + addVal, false);
+        Month month = date.getMonth();
+        int numMonth = month.getValue() == 11 ? addVal > 0 ? addVal : month.getValue() : month.getValue();
+        var result = getMonthName(numMonth, false);
         return result;
     }
 
-    public static int getCurrentYear() {
-        LocalDate today = LocalDate.now();
-        Month month = today.getMonth();
-        int year = month.getValue() == 11 ? today.getYear() + 1 : today.getYear();
+    public static int getCurrentYear(LocalDate date) {
+        Month month = date.getMonth();
+        int year = month.getValue() == 11 ? date.getYear() + 1 : date.getYear();
         return year;
     }
 
