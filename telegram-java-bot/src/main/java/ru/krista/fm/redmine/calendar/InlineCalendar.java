@@ -36,8 +36,11 @@ public class InlineCalendar {
         String buttonName;
         buttonName = "Выгрузить отчёт";
         String dateCallbackData;
-
-        dateCallbackData = date.getYear() + "-" + date.getMonthValue() + "-01";
+        if (date.getMonthValue() < 10) {
+            dateCallbackData = date.getYear() + "-0" + date.getMonthValue() + "-01";
+        } else {
+            dateCallbackData = date.getYear() + "-" + date.getMonthValue() + "-01";
+        }
 
         requestRow.add(ButtonFactory.createButton(buttonName, "get_report_" + dateCallbackData));
         return requestRow;

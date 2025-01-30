@@ -203,7 +203,7 @@ public class DateHelper {
         int addVal = 0;
         if (plus.length > 0) addVal = plus[0];
         Month month = date.getMonth();
-        int numMonth = month.getValue() == 12 ? addVal > 0 ? addVal : month.getValue() : month.getValue();
+        int numMonth = month.getValue() == 12 ? addVal > 0 ? addVal : month.getValue() : month.getValue() + addVal;
         var result = getMonthName(numMonth, false);
         return result;
     }
